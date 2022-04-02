@@ -7,10 +7,9 @@ import domain.model.StreamType
 class RootStreamListMapper {
     fun mapFrom(root: Root): List<Stream> {
         val items: MutableList<Stream> = ArrayList()
-
-        root.message?.forEach {
-            if (it.string.toString() == "streamAdded") {
-                it.array?.objects?.let { objects ->
+        root.messages.forEach { message ->
+            if (message.string.toString() == "streamAdded") {
+                message.array?.objects?.let { objects ->
                     val startTime: Long = objects[0].startTime
                     val streamId: String = objects[0].streamId.toString()
                     val streamName: String = objects[0].streamName.toString()

@@ -26,6 +26,7 @@ dependencies {
     kapt("com.tickaroo.tikxml:processor:$xmlVersion")
 
     implementation("net.bramp.ffmpeg:ffmpeg:0.6.2")
+    implementation("org.slf4j:slf4j-api:1.7.36")
 }
 
 tasks.test {

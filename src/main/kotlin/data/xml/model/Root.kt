@@ -9,5 +9,5 @@ data class Root(
     @PropertyElement(name = "DataPos")
     var dataPosition: Int,
     @Element(name = "Message")
-    var message: List<Message>
+    var messages: List<Message>
 )
