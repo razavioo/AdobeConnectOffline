@@ -1,3 +1,4 @@
+import domain.usecase.GetStreams
 import okio.ExperimentalFileSystem
 import okio.FileSystem
 import okio.Path
@@ -5,23 +6,25 @@ import okio.Path.Companion.toPath
 
 @ExperimentalFileSystem
 fun main(args: Array<String>) {
-    println("Hello World!")
-
-    // Try adding program arguments at Run/Debug configuration
-    println("Program arguments: ${args.joinToString()}")
-
     if (args.isEmpty()) {
-        println("Please set path of adobe connect zip file and try again!")
+        println(ARGUMENT_ISSUE_DESCRIPTION)
         return
     }
 
-    val path: Path = args[0].toPath()
-    val readmeContent = FileSystem.SYSTEM.list(path)
-    println(readmeContent)
-
+    val pathArgument: Path = args[0].toPath()
+    val paths = FileSystem.SYSTEM.list(pathArgument)
+    paths.forEach { path ->
+        if (path.name == INDEX_STREAM_FILE_NAME) {
+            val streams = GetStreams().invoke(path)
+            println(streams)
+        }
+    }
 
 //    FFmpeg ffmpeg = new FFmpeg("/path/to/ffmpeg");
 //    FFprobe ffprobe = new FFprobe("/path/to/ffprobe");
 //
 //    FFmpegBuilder builder = new FFmpegBuilder()
 }
+
+const val INDEX_STREAM_FILE_NAME = "indexstream.xml"
+const val ARGUMENT_ISSUE_DESCRIPTION = "Please set path of adobe connect zip file and try again!"

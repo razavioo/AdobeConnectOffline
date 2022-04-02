@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.6.10"
     kotlin("kapt") version "1.6.10"
     application
 }
 
-group = "me.razavioo"
+group = "dev.razavioo.adobe"
 version = "1.0"
 
 repositories {
@@ -18,9 +18,12 @@ dependencies {
 
     implementation("com.squareup.okio:okio-multiplatform:3.0.0-alpha.9")
 
-    implementation("com.tickaroo.tikxml:annotation:0.8.13")
-    implementation("com.tickaroo.tikxml:core:0.8.15")
-//    kapt("com.tickaroo.tikxml:processor:0.8.15")
+    val xmlVersion = "0.8.13"
+    implementation("com.tickaroo.tikxml:annotation:$xmlVersion")
+    @Suppress("GradlePackageUpdate")
+    implementation("com.tickaroo.tikxml:core:$xmlVersion")
+    @Suppress("GradlePackageUpdate")
+    kapt("com.tickaroo.tikxml:processor:$xmlVersion")
 
     implementation("net.bramp.ffmpeg:ffmpeg:0.6.2")
 }
