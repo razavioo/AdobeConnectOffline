@@ -25,7 +25,7 @@ dependencies {
     @Suppress("GradlePackageUpdate")
     kapt("com.tickaroo.tikxml:processor:$xmlVersion")
 
-    implementation("net.bramp.ffmpeg:ffmpeg:0.6.2")
+    implementation("com.github.kokorin.jaffree:jaffree:2021.12.30")
     implementation("org.slf4j:slf4j-api:1.7.36")
 }
 
