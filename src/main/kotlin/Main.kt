@@ -30,19 +30,22 @@ fun main(args: Array<String>) {
 }
 
 fun getCommand(streams: List<Stream>): String {
+    val videoTime = streams.first { it.type == StreamType.SCREEN_SHARE }.startTime
+
     val inputs = mutableListOf<String>()
     val filters = mutableListOf<String>()
     val audioIndexes = mutableListOf<String>()
     val maps = mutableListOf<String>()
 
-    streams.forEachIndexed { index, stream ->
+    streams.filter { it.startTime - videoTime >= 0 }.forEachIndexed { index, stream ->
         val inputTypeChar = if (stream.type == StreamType.SCREEN_SHARE) "v" else "a"
         val nameWithExtension = stream.name.split("/")[1] + ".flv"
         inputs.add("-i $nameWithExtension")
-        maps.add("-map $index:$inputTypeChar")
         if (stream.type == StreamType.CAMERA_VOIP) {
-            filters.add("[$index]adelay=${stream.startTime}[a$index]")
-            audioIndexes.add("[a$index]")
+            filters.add("[$index]adelay=${stream.startTime - videoTime}[audio$index]")
+            audioIndexes.add("[audio$index]")
+        } else {
+            maps.add("-map $index:$inputTypeChar")
         }
     }
 
@@ -58,13 +61,15 @@ fun getCommand(streams: List<Stream>): String {
                 postfix = ";"
             ) +
             audioIndexes.joinToString(separator = "") +
-            "amix=inputs=${audioIndexes.count()}" +
+            "amix=inputs=${audioIndexes.count()}[audios]" +
             "\"" +
             " " +
+            "-map [audios] " +
             maps.joinToString(separator = " ") +
             " " +
             "output.flv"
 }
 
 const val INDEX_STREAM_FILE_NAME = "indexstream.xml"
+const val MAIN_STREAM_FILE_NAME = "mainstream.xml"
 const val ARGUMENT_ISSUE_DESCRIPTION = "Exactly 1 argument expected: path to extracted zip folder!"
