@@ -30,6 +30,10 @@ dependencies {
 
     val jsoupVersion = "1.14.3"
     implementation("org.jsoup:jsoup:$jsoupVersion")
+
+    val ktorVersion = "2.0.0"
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
 }
 
 tasks.test {

@@ -1,8 +1,15 @@
+import domain.usecase.FFMpegCommandCreator
 import domain.usecase.SessionDownloadLinkGenerator
+import domain.usecase.SessionDownloader
 import domain.usecase.SessionStreamFinder
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.runBlocking
 import okio.ExperimentalFileSystem
-import okio.Path.Companion.toPath
+import java.io.File
+import java.util.*
 
+@InternalCoroutinesApi
 @ExperimentalFileSystem
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
@@ -11,11 +18,18 @@ fun main(args: Array<String>) {
     }
 
     val pathArgument: String = args[0]
-    val address = "http://fadonline.ir/p981febg5t5g/?proto=true"
-    val downloadLink = SessionDownloadLinkGenerator().generate(address)
+    val sessionAddress = "http://fadonline.ir/pvusl4b3io4o/?proto=true"
+    val downloadLink = SessionDownloadLinkGenerator().generate(sessionAddress)
     val streams = SessionStreamFinder().findAll(pathArgument)
     val command = FFMpegCommandCreator().create(streams)
-    val outputPath = pathArgument.toPath().toFile().absolutePath + "\\" + "output.flv"
+//    val outputPath = pathArgument.toPath().toFile().absolutePath + "\\" + "output.flv"
+    val outputPath = "C:\\Users\\razavioo\\Desktop"
+
+    runBlocking {
+        SessionDownloader().downloadFile(outputPath, downloadLink).collect()
+    }
+
+    Scanner(System.`in`).next()
 }
 
 private const val ARGUMENT_ISSUE_DESCRIPTION =
