@@ -1,3 +1,5 @@
+package domain.usecase
+
 import domain.model.Stream
 import domain.model.StreamType
 
