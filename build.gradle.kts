@@ -27,6 +27,9 @@ dependencies {
 
     implementation("com.github.kokorin.jaffree:jaffree:2021.12.30")
     implementation("org.slf4j:slf4j-api:1.7.36")
+
+    val jsoupVersion = "1.14.3"
+    implementation("org.jsoup:jsoup:$jsoupVersion")
 }
 
 tasks.test {
