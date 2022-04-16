@@ -15,11 +15,9 @@ import java.io.File
 
 class SessionDownloader {
     @InternalCoroutinesApi
-    fun downloadFile(downloadPath: String, downloadUrl: String): Flow<Pair<Long, Long>> = callbackFlow {
+    fun downloadFile(downloadPath: String, downloadUrl: String): Flow<DownloadState> = callbackFlow {
         val fileName = downloadUrl.substringAfterLast("/").substringBefore("?")
         val file = File(downloadPath.plus("/").plus(fileName))
-
-        println("File is ${file.absolutePath}")
 
         val client = HttpClient(CIO) {
             engine {
@@ -30,17 +28,20 @@ class SessionDownloader {
 
         val httpResponse: HttpResponse = client.get(downloadUrl) {
             onDownload { bytesSentTotal, contentLength ->
-                val percentage = ((bytesSentTotal.toDouble() / contentLength) * 100).toInt()
-                println("Received $bytesSentTotal bytes from $contentLength ($percentage percent)")
-                trySend(Pair(bytesSentTotal, contentLength))
+                trySend(DownloadState.Progressing(bytesSentTotal, contentLength))
             }
         }
         val responseBody: ByteArray = httpResponse.body()
         file.writeBytes(responseBody)
-        println("A file saved to ${file.path}")
+        trySend(DownloadState.Succeed(file))
 
         awaitClose {
             client.cancel()
         }
+    }
+
+    sealed class DownloadState {
+        data class Progressing(val bytesSentTotal: Long, val contentLength: Long) : DownloadState()
+        data class Succeed(val outputFile: File) : DownloadState()
     }
 }
