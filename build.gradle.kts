@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.10"
-    kotlin("kapt") version "1.6.10"
+    kotlin("jvm") version "1.6.21"
+    kotlin("kapt") version "1.6.21"
     application
 }
 
-group = "dev.razavioo.adobe"
+group = "dev.emad.adobe"
 version = "1.0"
 
 repositories {
@@ -33,7 +33,10 @@ dependencies {
 
     val ktorVersion = "2.0.0"
     implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    implementation("io.ktor:ktor-client-logging:$ktorVersion")
+
+    implementation("ch.qos.logback:logback-classic:1.2.11")
 }
 
 tasks.test {

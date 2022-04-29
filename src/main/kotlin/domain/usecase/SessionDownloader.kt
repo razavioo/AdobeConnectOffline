@@ -2,8 +2,10 @@ package domain.usecase
 
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.engine.cio.*
+import io.ktor.client.engine.apache.*
 import io.ktor.client.plugins.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -19,10 +21,16 @@ class SessionDownloader {
         val fileName = downloadUrl.substringAfterLast("/").substringBefore("?")
         val file = File(downloadPath.plus("/").plus(fileName))
 
-        val client = HttpClient(CIO) {
+        // CIO ENGINE SEEMS TO HAVE ISSUE ON SOME SSL CONNECTIONS:
+        // SEE https://github.com/ktorio/ktor/issues/439
+        val client = HttpClient(Apache) {
+            install(Logging) {
+                logger = Logger.SIMPLE
+                level = LogLevel.HEADERS
+            }
             engine {
-                requestTimeout = 0
-                threadsCount = 4
+                threadsCount = 8
+                connectTimeout = 0
             }
         }
 

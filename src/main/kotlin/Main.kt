@@ -7,10 +7,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.runBlocking
 import okio.ExperimentalFileSystem
 import utils.ZipUtils
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.util.*
-
 
 @InternalCoroutinesApi
 @ExperimentalFileSystem
@@ -25,12 +22,18 @@ fun main(args: Array<String>) {
     val sessionLink: String = args[0]
     val sessionDownloadLink = SessionDownloadLinkGenerator().generate(sessionLink)
 
+    println("Session download link created: $sessionDownloadLink")
+
     runBlocking {
+        var percentage = -1
         SessionDownloader().downloadFile(downloadFolderPath, sessionDownloadLink).collectLatest { state ->
             when (state) {
                 is SessionDownloader.DownloadState.Progressing -> {
-                    val percentage = ((state.bytesSentTotal.toDouble() / state.contentLength) * 100).toInt()
-                    println("Received: $percentage percent!")
+                    val newPercentage = ((state.bytesSentTotal.toDouble() / state.contentLength) * 100).toInt()
+                    if (newPercentage != percentage) {
+                        percentage = newPercentage
+                        println("Received: $percentage percent!")
+                    }
                 }
                 is SessionDownloader.DownloadState.Succeed -> {
                     val zipFile = state.outputFile
@@ -43,7 +46,7 @@ fun main(args: Array<String>) {
                     val command = FFMpegCommandCreator().create(streams)
                     println("Command is: $command")
 
-//                    runCommand(command)
+                    runCommand(command)
                 }
             }
         }
@@ -53,15 +56,11 @@ fun main(args: Array<String>) {
 }
 
 fun runCommand(command: String) {
-    val proc = Runtime.getRuntime().exec(command)
-    val reader = BufferedReader(InputStreamReader(proc.inputStream))
-
-    var line: String
-    while (reader.readLine().also { line = it } != null) {
-        print(line.trimIndent())
+    val process: Process = ProcessBuilder(command).start()
+    process.inputStream.reader(Charsets.UTF_8).use {
+        println(it.readText())
     }
-
-    proc.waitFor()
+    process.waitFor()
 }
 
 private const val ARGUMENT_ISSUE_DESCRIPTION =
