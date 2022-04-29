@@ -36,7 +36,8 @@ dependencies {
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
 
-    implementation("ch.qos.logback:logback-classic:1.2.11")
+    val logbackVersion = "1.2.11"
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
 }
 
 tasks.test {
