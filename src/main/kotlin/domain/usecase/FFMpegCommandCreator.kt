@@ -5,22 +5,21 @@ import domain.model.StreamType
 
 class FFMpegCommandCreator {
     fun create(streams: List<Stream>): String {
-        val videoTime = streams.first { it.type == StreamType.SCREEN_SHARE }.startTime
-
         val inputs = mutableListOf<String>()
-        val filters = mutableListOf<String>()
+        val audioFilters = mutableListOf<String>()
+        val videoFilters = mutableListOf<String>()
         val audioIndexes = mutableListOf<String>()
-        val maps = mutableListOf<String>()
+        val videoIndexes = mutableListOf<String>()
 
-        streams.filter { it.startTime - videoTime >= 0 }.forEachIndexed { index, stream ->
-            val inputTypeChar = if (stream.type == StreamType.SCREEN_SHARE) "v" else "a"
+        streams.forEachIndexed { index, stream ->
             val nameWithExtension = stream.name.split("/")[1] + ".flv"
             inputs.add("-i $nameWithExtension")
             if (stream.type == StreamType.CAMERA_VOIP) {
-                filters.add("[$index]adelay=${stream.startTime - videoTime}[audio$index]")
+                audioFilters.add("[$index]adelay=${stream.startTime}ms[audio$index]")
                 audioIndexes.add("[audio$index]")
             } else {
-                maps.add("-map $index:$inputTypeChar")
+                videoFilters.add("[$index]tpad=start_duration=${stream.startTime}ms:start_mode=add:color=black[video$index]")
+                videoIndexes.add("[video$index]")
             }
         }
 
@@ -31,17 +30,24 @@ class FFMpegCommandCreator {
                 "-filter_complex" +
                 " " +
                 "\"" +
-                filters.joinToString(
+                audioFilters.joinToString(
+                    separator = ";",
+                    postfix = ";"
+                ) +
+                videoFilters.joinToString(
                     separator = ";",
                     postfix = ";"
                 ) +
                 audioIndexes.joinToString(separator = "") +
                 "amix=inputs=${audioIndexes.count()}[audios]" +
+                ";" +
+                videoIndexes.joinToString(separator = "") +
+                "mix=inputs=${videoIndexes.count()}[videos]" +
                 "\"" +
                 " " +
                 "-map [audios] " +
-                maps.joinToString(separator = " ") +
+                "-map [videos] " +
                 " " +
-                "output.flv"
+                "output.flv -y"
     }
 }
