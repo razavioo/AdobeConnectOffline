@@ -8,7 +8,7 @@ import com.tickaroo.tikxml.annotation.Xml
 @Xml
 class Message(
     @Attribute
-    var time: Int = 0,
+    var time: Long = 0,
     @Attribute
     var type: String,
     @PropertyElement(name = "text")

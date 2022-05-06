@@ -5,7 +5,6 @@ import io.ktor.client.call.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.logging.*
-import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.InternalCoroutinesApi
