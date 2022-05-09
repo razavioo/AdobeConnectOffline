@@ -31,13 +31,16 @@ dependencies {
     val jsoupVersion = "1.14.3"
     implementation("org.jsoup:jsoup:$jsoupVersion")
 
-    val ktorVersion = "2.0.0"
+    val ktorVersion = "2.0.1"
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
 
     val logbackVersion = "1.2.11"
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
+
+    val picocliVersion = "4.6.3"
+    implementation("info.picocli:picocli:$picocliVersion")
 }
 
 tasks.test {

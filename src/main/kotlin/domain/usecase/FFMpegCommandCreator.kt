@@ -4,14 +4,13 @@ import domain.model.Stream
 import domain.model.StreamType
 
 class FFMpegCommandCreator {
-    fun create(streams: List<Stream>): String {
+    fun create(streams: List<Stream>, outputPath: String): String {
         val inputs = mutableListOf<String>()
         val audioIndexes = mutableListOf<String>()
         val videoIndexes = mutableListOf<String>()
 
         streams.forEachIndexed { index, stream ->
-            val nameWithExtension = stream.name.split("/")[1] + ".flv"
-            inputs.add("-itsoffset ${stream.startTime}ms -i $nameWithExtension")
+            inputs.add("-itsoffset ${stream.startTime}ms -i ${stream.name}")
             if (stream.type == StreamType.CAMERA_VOIP) {
                 audioIndexes.add("[$index:a]")
             } else {
@@ -26,6 +25,6 @@ class FFMpegCommandCreator {
                 "\"" +
                 " " +
                 "-map [audios] -map [videos] " +
-                "-y output.flv"
+                "-y ${outputPath}\\output.flv"
     }
 }

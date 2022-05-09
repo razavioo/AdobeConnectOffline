@@ -12,7 +12,9 @@ class SessionStreamFinder {
         paths.forEach { path ->
             val validFiles = listOf(INDEX_STREAM_FILE_NAME, MAIN_STREAM_FILE_NAME)
             if (validFiles.contains(path.name)) {
-                return GetStreams()(path)
+                return GetStreams()(path).map {
+                    it.copy(name = sessionPath + "\\" + it.name.split("/")[1] + ".flv")
+                }
             }
         }
         return arrayListOf()

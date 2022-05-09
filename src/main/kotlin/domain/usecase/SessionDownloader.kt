@@ -30,6 +30,7 @@ class SessionDownloader {
             engine {
                 threadsCount = 8
                 connectTimeout = 0
+                socketTimeout = 0
             }
         }
 
