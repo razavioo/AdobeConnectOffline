@@ -1,7 +1,4 @@
-import domain.usecase.FFMpegCommandCreator
-import domain.usecase.SessionDownloadLinkGenerator
-import domain.usecase.SessionDownloader
-import domain.usecase.SessionStreamFinder
+import domain.usecase.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.runBlocking
@@ -46,7 +43,7 @@ fun main(args: Array<String>) {
                     val command = FFMpegCommandCreator().create(streams)
                     println("Command is: $command")
 
-                    runCommand(command)
+                    CommandRunner().run(command)
                 }
             }
         }
@@ -55,13 +52,4 @@ fun main(args: Array<String>) {
     Scanner(System.`in`).next()
 }
 
-fun runCommand(command: String) {
-    val process: Process = ProcessBuilder(command).start()
-    process.inputStream.reader(Charsets.UTF_8).use {
-        println(it.readText())
-    }
-    process.waitFor()
-}
-
-private const val ARGUMENT_ISSUE_DESCRIPTION =
-    "Exactly 1 argument expected: Adobe connect URL!"
+private const val ARGUMENT_ISSUE_DESCRIPTION = "Exactly 1 argument expected: Adobe connect URL!"
