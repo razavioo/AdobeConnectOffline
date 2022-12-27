@@ -1,7 +1,4 @@
-import domain.usecase.FFMpegCommandCreator
-import domain.usecase.SessionDownloadLinkGenerator
-import domain.usecase.SessionDownloader
-import domain.usecase.SessionStreamFinder
+import domain.usecase.*
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.runBlocking
@@ -23,7 +20,7 @@ class MainCommand : Runnable {
     @Option(names = ["-o", "--output-path"], description = ["Output Path"], required = true)
     lateinit var outputPath: String
 
-    @OptIn(InternalCoroutinesApi::class, ExperimentalFileSystem::class)
+    @OptIn(InternalCoroutinesApi::class)
     override fun run() {
         downloadLink?.let { downloadLink ->
             val sessionDownloadLink = SessionDownloadLinkGenerator().generate(downloadLink)
@@ -75,6 +72,6 @@ class MainCommand : Runnable {
         Runtime.getRuntime().exec(command)
         Scanner(System.`in`).next()
 
-//        CommandRunner().run(command)
+        CommandRunner().run(command)
     }
 }
