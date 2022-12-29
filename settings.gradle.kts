@@ -1,1 +1,1 @@
-rootProject.name = "AdobeConnectOffline"
+rootProject.name = "adobe-connect-offline"
